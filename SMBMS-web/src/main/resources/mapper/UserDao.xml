@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cn.smbms.dao.user.UserDao">
+	<select id="login" resultType="User">
+		SELECT *
+		FROM smbms_user
+		WHERE
+		userCode = #{name}
+		AND userPassword = #{pwd}
+	</select>
+	<resultMap type="User" id="user">
+		<result column="roleName" property="userRoleName" />
+	</resultMap>
+	<select id="pagination" resultMap="user">
+		SELECT * FROM smbms_user,smbms_role
+		<trim prefix="where" prefixOverrides="and|or" suffixOverrides=",">
+			AND smbms_user.userRole = smbms_role.id
+			<if test="name != null">
+				AND userName LIKE CONCAT('%',#{name},'%')
+			</if>
+			<if test="role != null">
+				AND userRole = #{role}
+			</if>
+		</trim>
+	</select>
+
+	<insert id="addUser" parameterType="User">
+		INSERT INTO smbms_user(userCode,userName,userPassword,gender,
+		birthday,phone,address,userRole,creationDate
+		<trim>
+			<if test="createdBy!=null">
+				,createdBy
+			</if>
+			<if test="modifyBy!=null">
+				,modifyBy
+			</if>
+			<if test="modifyDate!=null">
+				,modifyDate
+			</if>
+			<if test="idPicPath!=null">
+				,idPicPath
+			</if>
+			<if test="workPicPath!=null">
+				,workPicPath
+			</if>
+		</trim>
+		)
+		VALUES(#{userCode},#{userName},#{userPassword},
+		#{gender},#{birthday},#{phone},#{address},#{userRole},
+		#{creationDate}
+		<trim>
+			<if test="createdBy!=null">
+				,#{createdBy}
+			</if>
+			<if test="modifyBy!=null">
+				,#{modifyBy}
+			</if>
+			<if test="modifyDate!=null">
+				,#{modifyDate}
+			</if>
+			<if test="idPicPath!=null">
+				,#{idPicPath}
+			</if>
+			<if test="workPicPath!=null">
+				,#{workPicPath}
+			</if>
+		</trim>
+		)
+	</insert>
+
+	<select id="getByCode" resultMap="user">
+		SELECT * FROM
+		smbms_user,smbms_role
+		WHERE smbms_user.userRole = smbms_role.id
+		AND smbms_user.userCode = #{userCode}
+	</select>
+	
+	<delete id="deleteUser">
+		DELETE FROM smbms_user
+		WHERE userCode = #{userCode}
+	</delete>
+	
+
+
+</mapper>

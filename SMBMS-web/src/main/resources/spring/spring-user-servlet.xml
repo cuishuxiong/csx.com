@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 扫描controller包 -->
+	<context:component-scan base-package="com.cn.smbms.controller.user" >
+		<context:include-filter type="annotation" 
+			expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+
+	<!-- 开启springmvc 注解扫描 -->
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<!-- spring mvc 中文乱码问题 -->
+			<bean 
+			class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="defaultCharset" value="utf-8" />
+				<property name="supportedMediaTypes">
+					<list>
+						<value>application/json;charset=utf-8</value>
+						<value>text/html;charset=utf-8</value>
+					</list>
+				</property>
+			</bean>
+			<!-- fastjson日期处理 -->
+			<bean
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter4">
+				<property name="features">
+					<list>
+						<value>WriteDateUseDateFormat</value>
+					</list>
+				</property>
+				<property name="dateFormat" value="yyyy-MM-dd HH:mm:ss" />
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- 配置前缀和后缀 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/user/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+
+	<!-- 忽略静态资源 -->
+	<mvc:resources location="/resources/" mapping="/resources/**" />
+	<!-- 忽略swagger 资源 -->
+	<mvc:resources location="/swagger/" mapping="/swagger/**"></mvc:resources>
+
+	<!-- 配置文件上传的解析器 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8" />
+		<!-- 最大上传照片为5M -->
+		<property name="maxUploadSize" value="5242880" />
+	</bean>
+
+	 <!-- 配置拦截器信息 -->
+	<!--<mvc:interceptors>
+		<bean class="com.cn.smbms.interceptor.Interceptor1"/>
+		<bean class="com.cn.smbms.interceptor.Interceptor2"/>
+	</mvc:interceptors> -->
+	
+	<!-- 装配swagger  -->
+	<bean class="com.cn.smbms.config.SwaggerConfig"/>
+
+</beans>

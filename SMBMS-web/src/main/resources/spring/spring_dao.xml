@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 获取数据库配置文件 -->
+	<context:property-placeholder location="classpath:DB.properties"/>
+	
+	<!-- 配置数据源信息 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driver}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.uname}"/>
+		<property name="password" value="${jdbc.pwd}"/>
+		<property name="maxActive" value="${jdbc.maxActive}"/>
+		<property name="maxIdle" value="${jdbc.maxIdle}"/>
+		<property name="maxWait" value="${jdbc.maxWait}"/>
+		<property name="minIdle" value="${jdbc.minIdle}"/>
+		<property name="initialSize" value="${jdbc.initialSize}"/>
+		<property name="removeAbandoned" value="${jdbc.removeAbandoned}"/>
+		<property name="removeAbandonedTimeout" value="${jdbc.removeAbandonedTimeout}"/>
+	</bean>
+	
+	<!-- 配置sqlSessionFactoryBean -->
+	<bean id="sqlSessionFactory" 
+	class="org.mybatis.spring.SqlSessionFactoryBean">
+			<property name="dataSource" ref="dataSource"/>
+			<!-- mybatis配置文件 -->
+			<property name="configLocation" value="classpath:mybatis-config.xml"/>
+			<!-- mapper配置文件 -->
+			<property name="mapperLocations" value="classpath:mapper/*.xml"/>
+	</bean>
+	
+</beans>
